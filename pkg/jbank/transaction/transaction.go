@@ -30,8 +30,8 @@ const (
 type Transaction struct {
 	Date        time.Time `csv:"Dato"`
 	Text        string    `csv:"Tekst"`
-	Amount      int       `csv:"Beløb"`
-	Balance     int       `csv:"Saldo"`
+	Amount      int64     `csv:"Beløb"`
+	Balance     int64     `csv:"Saldo"`
 	Comment     string    `csv:"Kommentar"`
 	Reconciled  bool      `csv:"Afstemt"`
 	Flag        bool      `csv:"Flag"`
@@ -40,10 +40,11 @@ type Transaction struct {
 	SubCategory string    `csv:"Underkategori"`
 }
 
-func parseAmount(s string) (i int, err error) {
+func parseAmount(s string) (i int64, err error) {
 	s = strings.Replace(s, ",", "", -1)
 	s = strings.Replace(s, ".", "", -1)
-	return strconv.Atoi(s)
+	v, err := strconv.Atoi(s)
+	return (int64)(v), err
 }
 
 func parseBool(s string) (b bool, err error) {
