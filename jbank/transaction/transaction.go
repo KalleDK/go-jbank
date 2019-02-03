@@ -109,17 +109,21 @@ func FromCSV(r io.Reader) (ts []Transaction, err error) {
 	cr.Read()
 
 	for {
+
 		record, err := cr.Read()
 		if err == io.EOF {
 			break
 		}
+
 		if err != nil {
 			log.Fatal(err)
 		}
+
 		transaction, err := Parse(record)
 		if err != nil {
 			log.Fatal(err)
 		}
+
 		ts = append(ts, transaction)
 	}
 	return ts, err
