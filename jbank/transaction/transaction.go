@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -99,14 +98,21 @@ func Parse(record []string) (t Transaction, err error) {
 	return t, nil
 }
 
-func FromCSV(r io.Reader) (ts []Transaction, err error) {
-	cr := csv.NewReader(r)
+func FromCSV(cr *csv.Reader) (ts []Transaction, err error) {
 	cr.Comma = ';'
 
 	ts = []Transaction{}
 
 	// TODO Remove first line but also verify it
 	cr.Read()
+	_, err = cr.Read()
+	if err == io.EOF {
+		return ts, nil
+	}
+
+	if err != nil {
+		return ts, err
+	}
 
 	for {
 
@@ -116,15 +122,20 @@ func FromCSV(r io.Reader) (ts []Transaction, err error) {
 		}
 
 		if err != nil {
-			log.Fatal(err)
+			return ts, err
 		}
 
 		transaction, err := Parse(record)
 		if err != nil {
-			log.Fatal(err)
+			return ts, err
 		}
 
 		ts = append(ts, transaction)
 	}
-	return ts, err
+	return ts, nil
+}
+
+func FromCSVStream(r io.Reader) (ts []Transaction, err error) {
+	cr := csv.NewReader(r)
+	return FromCSV(cr)
 }

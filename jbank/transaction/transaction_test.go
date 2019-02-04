@@ -13,7 +13,7 @@ func TestFromCSV(t *testing.T) {
 
 	fmt.Println(string(csvBlob[:]))
 
-	transactions, _ := FromCSV(strings.NewReader(csvBlob))
+	transactions, _ := FromCSVStream(strings.NewReader(csvBlob))
 	if transactions[0].Amount != -15435 {
 		t.Fatalf("parsed to wrong amount got %v should be %v", transactions[0].Amount, -15435)
 	}
